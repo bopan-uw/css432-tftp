@@ -3,7 +3,7 @@
 git remote add teacher-upstream https://github.com/bopan-uw/css432-tftp.git
 git fetch teacher-upstream main:teacher-main
 
-CHANGES=$(git diff main -- .github/ teacher-main -- .github/)
+CHANGES=$(git diff teacher-main -- .github/ main -- .github/)
 
 if [ -z "$CHANGES" ]
 then
