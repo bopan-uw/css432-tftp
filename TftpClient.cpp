@@ -5,6 +5,7 @@
 //Sample echo client program - CSS 432 - Winter 2024
 
 #include <stdio.h>
+#include <fstream>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -14,7 +15,6 @@
 #include <string.h>         // for strerror function.
 #include <signal.h>         // for the signal handler registration.
 #include <unistd.h>
-
 
 
 
@@ -95,6 +95,10 @@ void dg_cli(int sockfd, struct sockaddr *pserv_addr, int servlen)
             recvline[n] = 0;
             fputs(recvline, stdout);
             printf("************\n\n");
+
+            std::ofstream output;
+            output.open("output.txt");
+            output.close();
         }
     }
 }
