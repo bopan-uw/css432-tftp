@@ -37,6 +37,9 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{env.BUILD_TYPE}}
 
+    - name: Check no change to .github
+      run: bash .github/workflows/check_no_change.sh
+
     - name: Test echo server
       working-directory: ${{github.workspace}}/build
       run: bash TestTftp.sh
