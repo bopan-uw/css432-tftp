@@ -98,6 +98,7 @@ void dg_cli(int sockfd, struct sockaddr *pserv_addr, int servlen)
 
             std::ofstream output;
             output.open("output.txt");
+            output << recvline;
             output.close();
         }
     }
