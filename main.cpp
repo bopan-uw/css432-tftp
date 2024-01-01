@@ -4,7 +4,6 @@
 #include <iostream>
 #include "sum2num.h"
 int main() {
-
     std::cout << "Hello, World! " << sum(1,2)<< std::endl;
     return 0;
 }
