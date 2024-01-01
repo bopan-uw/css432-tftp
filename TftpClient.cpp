@@ -65,7 +65,7 @@ void dg_cli(int sockfd, struct sockaddr *pserv_addr, int servlen)
 /* unused flag byte (0) and the server's address size (servlen).   */
 /* The returned number is the number of bytes sent. If it is not n */
 /* either an error or an interrupt has occured.                    */
-        printf("Sending data to server: %s", sendline);
+        printf("Sending data to server: %s\n", sendline);
         if (sendto(sockfd, sendline, n, 0, pserv_addr, servlen) != n)
         {
             printf("%s: sendto error on socket\n",progname);
@@ -94,10 +94,10 @@ void dg_cli(int sockfd, struct sockaddr *pserv_addr, int servlen)
 
             recvline[n] = 0;
             fputs(recvline, stdout);
-            printf("************\n\n");
+            printf("\n************\n\n");
 
             std::ofstream output;
-            output.open("output.txt");
+            output.open("output.txt", std::ios::app);
             output << recvline;
             output.close();
         }
