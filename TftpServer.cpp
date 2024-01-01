@@ -4,6 +4,7 @@
 //for system calls, please refer to the MAN pages help in Linux
 //sample echo server program over udp - CSS432 - winter 2024
 #include <stdio.h>
+#include <fstream>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -14,12 +15,12 @@
 #include <signal.h>         // for the signal handler registration.
 #include <unistd.h>
 
-#define SERV_UDP_PORT 61124 // REPLACE WITH YOUR PORT NUMBER
+#define SERV_UDP_PORT 61125 // REPLACE WITH YOUR PORT NUMBER
 
 
 char *progname;
 
-/* Size of maximum message to received.                            */
+/* Size of maximum message to receive.                            */
 
 #define MAXMESG 2048
 
@@ -68,6 +69,12 @@ int dg_echo(int sockfd)
             exit(3);
         }
 
+        mesg[n] = 0;
+        std::ofstream output;
+        output.open("output_server.txt", std::ios::app);
+        output << mesg;
+        output.close();
+
 /* Note that if you are using timeouts, n<0 may not mean an error, */
 /* but that the call was interrupted by a signal. To see what      */
 /* happened, you have to look at the value of the system variable  */
@@ -107,7 +114,6 @@ int main(int argc, char *argv[])
 
 /* argv[0] holds the program's name. We use this to label error    */
 /* reports.                                                        */
-    printf("print\n");
     progname=argv[0];
 
 /* Create a UDP socket (an Internet datagram socket). AF_INET      */

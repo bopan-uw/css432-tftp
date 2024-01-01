@@ -18,7 +18,7 @@
 
 
 
-#define SERV_UDP_PORT 61124 //REPLACE WITH YOUR PORT NUMBER
+#define SERV_UDP_PORT 61125 //REPLACE WITH YOUR PORT NUMBER
 //#define SERV_HOST_ADDR "10.158.82.32" //REPLACE WITH SERVER IP ADDRESS
 #define SERV_HOST_ADDR "127.0.0.1" //REPLACE WITH SERVER IP ADDRESS
 
@@ -77,7 +77,7 @@ void dg_cli(int sockfd, struct sockaddr *pserv_addr, int servlen)
 /* are returned, but we do not need them, so we use null pointers. */
 /* The return value is the number of bytes received.               */
 
-        printf("Waiting to receice data from server\n");
+        printf("Waiting to receive data from server\n");
 
         n = recvfrom(sockfd, recvline, MAXLINE, 0, NULL, NULL);
         if (n < 0)
@@ -97,7 +97,7 @@ void dg_cli(int sockfd, struct sockaddr *pserv_addr, int servlen)
             printf("\n************\n\n");
 
             std::ofstream output;
-            output.open("output.txt", std::ios::app);
+            output.open("output_client.txt", std::ios::app);
             output << recvline;
             output.close();
         }
