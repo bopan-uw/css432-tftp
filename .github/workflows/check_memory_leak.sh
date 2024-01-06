@@ -1,4 +1,5 @@
 #!/bin/bash
+
 sudo apt install valgrind
 
 valgrind --leak-check=full \
@@ -14,3 +15,4 @@ valgrind --leak-check=full \
          --verbose \
          --log-file=valgrind-out-client.txt \
          ./tftp-client
+
