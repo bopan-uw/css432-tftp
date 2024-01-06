@@ -7,12 +7,13 @@ valgrind --leak-check=full \
          --track-origins=yes \
          --verbose \
          --log-file=valgrind-out-server.txt \
-         ./tftp-server
+         ./tftp-server &
 
 valgrind --leak-check=full \
          --show-leak-kinds=all \
          --track-origins=yes \
          --verbose \
          --log-file=valgrind-out-client.txt \
-         ./tftp-client
+         ./tftp-client < input.txt
 
+kill "$(jobs -p)"
