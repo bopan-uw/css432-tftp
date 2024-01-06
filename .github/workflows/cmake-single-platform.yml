@@ -43,3 +43,7 @@ jobs:
     - name: Test echo server
       working-directory: ${{github.workspace}}/build
       run: bash TestTftp.sh
+
+    - name: Check memory leak
+      working-directory: ${{github.workspace}}/build
+      run: bash check_memory_leak.sh
