@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+
 echo "starting server..."
 ./tftp-server &
 
