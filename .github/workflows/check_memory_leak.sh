@@ -17,3 +17,6 @@ valgrind --leak-check=full \
          ./tftp-client < input.txt
 
 kill "$(jobs -p)"
+
+cat valgrind-out-server.txt
+cat valgrind-out-client.txt
