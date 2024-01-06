@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 echo "starting server..."
 ./tftp-server &
@@ -10,6 +9,8 @@ sleep 2
 
 echo "starting client..."
 ./tftp-client < input.txt
+
+kill "$(jobs -p)"
 
 if [ ! -e output_client.txt ]
 then
