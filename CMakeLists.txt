@@ -6,6 +6,7 @@ enable_testing()
 
 configure_file(.github/workflows/TestTftp.sh TestTftp.sh COPYONLY)
 configure_file(.github/workflows/input.txt input.txt COPYONLY)
+configure_file(.github/workflows/check_memory_leak.sh check_memory_leak.sh COPYONLY)
 
 add_executable(tftp-client TftpClient.cpp)
 add_executable(tftp-server TftpServer.cpp)
