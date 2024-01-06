@@ -1,5 +1,5 @@
 #!/bin/bash
-
+sudo apt install valgrind
 valgrind --leak-check=full \
          --show-leak-kinds=all \
          --track-origins=yes \
