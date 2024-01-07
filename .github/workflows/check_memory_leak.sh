@@ -18,34 +18,42 @@ valgrind --leak-check=full \
 
 kill "$(jobs -p)"
 
-cat valgrind-out-server.txt
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+GREEN='\033[0;32m'
+
 echo "======================================"
-echo "= Checking memory leak for server..."
+echo "= Checking memory leak for server... ="
+echo "======================================"
+cat valgrind-out-server.txt
+
 result1=$(grep -c "definitely lost: 0 bytes in 0 blocks" valgrind-out-server.txt)
 result2=$(grep -c "indirectly lost: 0 bytes in 0 blocks" valgrind-out-server.txt)
 if [[ $(grep -c "All heap blocks were freed -- no leaks are possible" valgrind-out-server.txt) -eq 1 ]]
 then
-  echo "= Memory check passed. All heap blocks were freed"
+  echo -e "${GREEN}Memory check passed. All heap blocks were freed"
 elif [[ $result1 -eq 1 && $result2 -eq 1 ]]
 then
-  echo "= Memory check passed."
+  echo -e "${GREEN}Memory check passed."
 else
-  echo "= Detected memory leak!"
+  echo -e "${RED}Detected memory leak!"
   exit 1
 fi
 
-cat valgrind-out-client.txt
 echo "======================================"
-echo "= Checking memory leak for client..."
+echo "= Checking memory leak for client... ="
+echo "======================================"
+cat valgrind-out-client.txt
+
 result1=$(grep -c "definitely lost: 0 bytes in 0 blocks" valgrind-out-client.txt)
 result2=$(grep -c "indirectly lost: 0 bytes in 0 blocks" valgrind-out-client.txt)
 if [[ $(grep -c "All heap blocks were freed -- no leaks are possible" valgrind-out-client.txt) -eq 1 ]]
 then
-  echo "= Memory check passed. All heap blocks were freed"
+  echo -e "${GREEN}Memory check passed. All heap blocks were freed"
 elif [[ $result1 -eq 1 && $result2 -eq 1 ]]
 then
-  echo "= Memory check passed."
+  echo -e "${GREEN}Memory check passed."
 else
-  echo "= Detected memory leak!"
+  echo -e "${RED}Detected memory leak!"
   exit 1
 fi
