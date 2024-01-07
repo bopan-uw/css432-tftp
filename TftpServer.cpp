@@ -11,10 +11,9 @@
 #include <cstdlib>
 #include <cstring>
 
-#define SERV_UDP_PORT 61125 // REPLACE WITH YOUR PORT NUMBER
+#define SERV_UDP_PORT 61125
 /* Size of maximum message to receive.                            */
 #define MAX_MESG 2048
-char *program;
 
 /* The dg_echo function receives data from the already initialized */
 /* socket sockfd and returns them to the sender.                   */
@@ -51,8 +50,7 @@ int dg_echo(int sockfd) {
         n = recvfrom(sockfd, mesg, MAX_MESG, 0, &pcli_addr, &cliLen);
 
 /* n holds now the number of received bytes, or a negative number  */
-/* to show an error condition. Notice how we use program to label */
-/* the source of the error.                                        */
+/* to show an error condition.                                    */
 
         if (n < 0) {
             perror("recvfrom error.");
@@ -71,6 +69,7 @@ int dg_echo(int sockfd) {
 /* size clilen). 0 is an unused flag byte. This call returns the   */
 /* number of bytes sent, which differs from what we wanted in case */
 /* of an error. Again, the return value may signify an interrupt.  */
+
         std::cout << "echo back to client." << std::endl;
         if (sendto(sockfd, mesg, n, 0, &pcli_addr, cliLen) != n) {
             perror("sendto error.");
@@ -90,6 +89,7 @@ int dg_echo(int sockfd) {
 /* dg_echo function that never terminates.                         */
 
 int main(int argc, char *argv[]) {
+    std::cout << "Starting server..." << std::endl;
 
 /* General purpose socket structures are accessed using an         */
 /* integer handle.                                                 */
@@ -101,58 +101,36 @@ int main(int argc, char *argv[]) {
 
     struct sockaddr_in serv_addr;
 
-/* argv[0] holds the program's name. We use this to label error    */
-/* reports.                                                        */
-    program=argv[0];
-
-/* Create a UDP socket (an Internet datagram socket). AF_INET      */
-/* means Internet protocols and SOCK_DGRAM means UDP. 0 is an      */
-/* unused flag byte. A negative value is returned on error.        */
-    std::cout << "Starting server" << std::endl;
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("Can't open datagram socket");
-        exit(EXIT_FAILURE);
-    }
-
-/* Abnormal termination using the exit call may return a specific  */
-/* integer error code to distinguish among different errors.       */
-
-/* To use the socket created, we must assign to it a local IP      */
-/* address and a UDP port number, so that the client can send data */
-/* to it. To do this, we fisrt prepare a sockaddr structure.       */
-
-/* The bzero function initializes the whole structure to zeroes.   */
-
+    /* Reset serv_addr to 0 */
     memset(&serv_addr, 0, sizeof(serv_addr));
 
-/* As sockaddr is a general purpose structure, we must declare     */
-/* what type of address it holds.                                  */
+    /*
+     * TODO:
+     *  1. Create a UDP socket. Use SOCK_DGRAM. Print error if creation fails.
+     *      Create a UDP socket (an Internet datagram socket). AF_INET
+     *      means Internet protocols and SOCK_DGRAM means UDP. 0 is an
+     *      unused flag byte. A negative value is returned on error.
+     *  2. Fill in serv_addr information
+     *      To use the socket created, we must assign to it a local IP
+     *      address and a UDP port number, so that the client can send data
+     *      to it. To do this, we first prepare a sockaddr struct.
+     *      As sockaddr is a general purpose structure, we must declare
+     *      what type of address it holds.
+     *      If the server has multiple interfaces, it can accept calls from
+     *      any of them. Instead of using one of the server's addresses,
+     *      we use INADDR_ANY to say that we will accept calls on any of
+     *      the server's addresses. Note that we have to convert the host
+     *      data representation to the network data representation.
+     *      We must use a specific port for our server for the client to
+     *      send data to (a well-known port).
+     *  3. Bind. Associate the socket to serv_addr. Print error if bind fails.
+     *      We initialize the socket pointed to by sockfd by binding to it
+     *      the address and port information from serv_addr. Note that we
+     *      must pass a general purpose structure rather than an Internet
+     *      specific one to the bind call and also pass its size. A
+     *      negative return value means an error occurred.
+     */
 
-    serv_addr.sin_family = AF_INET;
-
-/* If the server has multiple interfaces, it can accept calls from */
-/* any of them. Instead of using one of the server's addresses,    */
-/* we use INADDR_ANY to say that we will accept calls on any of    */
-/* the server's addresses. Note that we have to convert the host   */
-/* data representation to the network data representation.         */
-
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-/* We must use a specific port for our server for the client to    */
-/* send data to (a well-known port).                               */
-
-    serv_addr.sin_port = htons(SERV_UDP_PORT);
-
-/* We initialize the socket pointed to by sockfd by binding to it  */
-/* the address and port information from serv_addr. Note that we   */
-/* must pass a general purpose structure rather than an Internet   */
-/* specific one to the bind call and also pass its size. A         */
-/* negative return value means an error occured.                   */
-
-    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-        perror("can't bind local address");
-        exit(2);
-    }
 
 /* We can now start the echo server's main loop. We only pass the  */
 /* local socket to dg_echo, as the client's data are included in   */
