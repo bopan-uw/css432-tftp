@@ -9,6 +9,8 @@ valgrind --leak-check=full \
          --log-file=valgrind-out-server.txt \
          ./tftp-server &
 
+sleep 2 # ensure server has started and ready first before client starts
+
 valgrind --leak-check=full \
          --show-leak-kinds=all \
          --track-origins=yes \
