@@ -21,6 +21,9 @@
 /* Size of maximum message to send.                                */
 #define MAX_LINE 512
 
+/* A pointer to the name of this program for error reporting.      */
+char *program;
+
 /* The dg_cli function reads lines from the terminal, sends them   */
 /* to the echo server pointed to by pserv_addr, and prints to the  */
 /* terminal the echoed data. The local endpoint is sockfd. The     */
@@ -95,40 +98,65 @@ void dg_cli(int sockfd, struct sockaddr *pserv_addr, int serv_len) {
 /* calling the dg_cli main loop.                                   */
 
 int main(int argc, char *argv[]) {
-    std::cout << "Starting client..." << std::endl;
-    int sockfd; // socket descriptor
+    program = argv[0];
+
+    int sockfd;
 
 /* We need to set up two addresses, one for the client and one for */
 /* the server.                                                     */
 
     struct sockaddr_in cli_addr, serv_addr;
 
-/* Reset serv_addr and cli_addr */
+/* Initialize first the server's data with the well-known numbers. */
 
     memset(&serv_addr, 0, sizeof(serv_addr));
+
+
+/* Fill in serv_addr information */
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = inet_addr(SERV_HOST_ADDR);
+    serv_addr.sin_port        = htons(SERV_UDP_PORT);
+
+/* Create the socket for the client side.                          */
+
+    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+        perror("client socket creation failed.");
+        exit(EXIT_FAILURE);
+    }
+
+/* Initialize the structure holding the local address data to      */
+/* bind to the socket.                                             */
+
     memset(&cli_addr, 0, sizeof(cli_addr));
+    cli_addr.sin_family = AF_INET;
 
-    /*
-     *  TODO:
-     *   1. Fill in serv_addr. Use AF_INET, SERV_HOST_ADDR and SERV_UDP_PORT
-     *      The system needs a 32 bit integer as an Internet address, so we
-     *      use inet_addr to convert the dotted decimal notation to it.
-     *   2. Fill in cli_addr. Use INADDR_ANY to let system choose any address.
-     *      The client can also choose any port for itself (it is not
-     *      well-known). Using 0 as port number lets the system allocate any free
-     *      port to our program. Note that we have to convert the host
-     *      data representation to the network data representation. See "htonl"
-     *      and "htons"
-     *   3. Create a UDP socket, using SOCK_DGRAM. Print error if creation fails
-     *   4. Bind. Bind the socket to cli_addr. Print error if bind fails.
-     *      The initialized address structure can be now associated with
-     *      the socket we created. Note that we use a different parameter
-     */
+/* Let the system choose one of its addresses for you. You can     */
+/* use a fixed address as for the server.                          */
 
+    cli_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+/* The client can also choose any port for itself (it is not       */
+/* well-known). Using 0 here lets the system allocate any free     */
+/* port to our program.                                            */
+
+    cli_addr.sin_port = htons(0);
+
+/* The initialized address structure can be now associated with    */
+/* the socket we created. Note that we use a different parameter   */
+/* to exit() for each type of error, so that shell scripts calling */
+/* this program can find out how it was terminated. The number is  */
+/* up to you, the only convention is that 0 means success.         */
+
+    if (bind(sockfd, (struct sockaddr *) &cli_addr, sizeof(cli_addr)) < 0) {
+        perror("Can't bind local address.");
+        exit(EXIT_FAILURE);
+    }
 
 /* Call the main client loop. We need to pass the socket to use    */
 /* on the local endpoint, and the server's data that we already    */
 /* set up, so that communication can start from the client.        */
+    std::cout << "Bind socket complete" << std::endl;
 
     std::cout << "Type a message to send to server..." << std::endl;
     dg_cli(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
